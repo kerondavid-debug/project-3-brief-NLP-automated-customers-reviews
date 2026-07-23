@@ -15,7 +15,7 @@ This project aims to develop a product review system powered by NLP models that 
 | Model                            | Feature extraction         | Training model                    | Accuracy | Test set | Notes                                                                                     |
 |-----------------------------------|-----------------------------|------------------------------------|----------|----------|---------------------------------------------------------------------------------------------|
 | 1. Sentiment Analysis            | Hugging Face tokenizer      | `distilbert-base-uncased` (fine-tuned) | 90.8%   | 3,295 reviews | Macro F1 0.848; weakest on the minority `neutral` class (F1 0.717), strongest on `positive` (F1 0.957) |
-| 2. Product Category Clustering   | TF‑IDF (word n-grams)       | KMeans + rule-based mapping        | n/a (unsupervised) | — | Hybrid approach: KMeans clusters on cleaned product names, refined with `primaryCategories` into 5 final meta-categories |
+| 2. Product Category Clustering   | TF‑IDF (word n-grams)       | KMeans + rule-based mapping        | n/a (unsupervised) | — | Hybrid approach: KMeans clusters on cleaned product names, refined with `primaryCategories` into 7 final meta-categories |
 | 3. Product Review Summarization  | Prompted generation         | `meta-llama/Llama-3.2-3B-Instruct` | n/a (generative) | — | Evaluated qualitatively (readability/faithfulness of generated summaries), not via classification accuracy |
 | 4. Product Review Summarization                                |    Hugging Face tokenizer                           | `distilbert-base-uncased`                                     |          |          |       the new transformers did not provide the summarization task                                                                                        | 
 | 5.                                |                              |                                     |          |          |                                                                                               |
@@ -118,7 +118,7 @@ See [`03_Product_Category_Clustering/3_prodcat.ipynb`](03_Product_Category_Clust
 ### 3. Summarization
 
 - **Goal**: Turn raw customer reviews into short, readable recommendation-style write-ups per product category, so a shopper (or a store manager) can understand consensus opinion without reading hundreds of reviews.
-- **Approach**: Prompted `meta-llama/Llama-3.2-3B-Instruct` with the reviews for each category (grouped by the 5 meta-categories from step 2) to generate, for each category: the top products with review counts and average ratings, what reviewers like about the top products ("what sets it apart"), the most common complaints, and a "worst product in the category" callout with the reason to avoid it.
+- **Approach**: Prompted `meta-llama/Llama-3.2-3B-Instruct` with the reviews for each category (grouped by the 7 meta-categories from step 2) to generate, for each category: the top products with review counts and average ratings, what reviewers like about the top products ("what sets it apart"), the most common complaints, and a "worst product in the category" callout with the reason to avoid it.
 - **Output**: See [`04_Product_Review_Summarization/category_summaries.md`](04_Product_Review_Summarization/category_summaries.md) for the generated summaries.
 
 
@@ -181,7 +181,7 @@ clean_reviews.csv  (single source of truth for all downstream tasks)
 # Results
 
 - **Sentiment Analysis** — 90.8% accuracy / 0.848 macro F1 on a held-out test set of 3,295 reviews. The model performs strongly on the majority `positive` class (F1 0.957) and reasonably on `negative` (F1 0.868), but is noticeably weaker on the minority `neutral` class (F1 0.717) — expected given `neutral` made up only ~4% of the training data.
-- **Product Category Clustering** — 106 unique cleaned product names consolidated into 5 business-oriented meta-categories: Tablets (29,553 reviews), Accessories & Chargers (11,126), Smart Home & Speakers (7,665), E-Readers (4,631), and Non-Electronics (9 — too few reviews to draw firm conclusions on its own).
+- **Product Category Clustering** — 106 unique cleaned product names consolidated into 7 business-oriented meta-categories: Tablets (29,553 reviews), Accessories & Chargers (11,126), Smart Home & Speakers (7,665), E-Readers (4,631), and Non-Electronics (9 — too few reviews to draw firm conclusions on its own).
 - **Review Summarization** — Category-level write-ups generated for each meta-category, highlighting top-rated products, recurring praise, common complaints, and the weakest product per category. See [`04_Product_Review_Summarization/category_summaries.md`](04_Product_Review_Summarization/category_summaries.md) for full examples.
 - **Deployment** — The sentiment model was exported to ONNX and deployed as a FastAPI serverless function on Vercel, with the model weights hosted on the Hugging Face Hub and downloaded at cold start.
 
@@ -215,7 +215,7 @@ Then run the notebooks in order:
 
 1. `01_DataPrep/dataprep2.ipynb` — merges the raw Kaggle CSVs, cleans, and outputs `clean_reviews.csv`
 2. `02_Sentiment_Analysis/2_sentiment.ipynb` — fine-tunes `distilbert-base-uncased` on `clean_reviews.csv`
-3. `03_Product_Category_Clustering/3_prodcat.ipynb` — TF-IDF + K-Means clustering into 5 meta-categories
+3. `03_Product_Category_Clustering/3_prodcat.ipynb` — TF-IDF + K-Means clustering into 7 meta-categories
 4. `04_Product_Review_Summarization/4_summarization.ipynb` — prompts `meta-llama/Llama-3.2-3B-Instruct` to generate category summaries
 
 The raw data is provided as `00_Data/original_kaggle_data_download_archive.zip` (containing the 3 source CSVs), so no separate Kaggle download is required.
