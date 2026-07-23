@@ -2,7 +2,14 @@
 
 <br>
 
-## Project Goal
+[![Vercel](https://img.shields.io/badge/deployed-Vercel-000?logo=vercel)](https://p3nlp-customers-reviews.vercel.app/)
+[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi)](https://p3nlp-customers-reviews.vercel.app/api/health)
+[![Python](https://img.shields.io/badge/python-3.10+-blue?logo=python)](https://www.python.org/)
+
+<br>
+
+
+## 🎯  Project Goal
 
 This project aims to develop a product review system powered by NLP models that aggregate customer feedback from different sources. The key tasks include classifying reviews, clustering product categories, and using generative AI to summarize reviews into recommendation articles.
 
@@ -11,7 +18,7 @@ This project aims to develop a product review system powered by NLP models that 
 ---
 
 
-## Deployment
+## 🚀 Deployment
 
 ### Application hosted on Vercel
 
@@ -25,7 +32,7 @@ This project aims to develop a product review system powered by NLP models that 
 
 ---
 
-## Live Demo
+## 🚀 Live Demo
 
 🌐 **Vercel Hosting API and Application**
 
@@ -42,7 +49,7 @@ https://p3nlp-customers-reviews.vercel.app/api/predict
 
 ---
 
-## Problem Statement
+## 📌 Problem Statement
 
 With thousands of reviews available across multiple platforms, manually analyzing them is inefficient. This project seeks to automate the process using NLP models to extract insights and provide users with valuable product recommendations.
 
@@ -50,7 +57,7 @@ With thousands of reviews available across multiple platforms, manually analyzin
 
 ---
 
-## Datasets
+## 📊 Datasets
 
 **Primary Dataset - Consumer Reviews of Amazon Products** :
 - https://www.kaggle.com/datasets/datafiniti/consumer-reviews-of-amazon-products/data
@@ -63,7 +70,7 @@ With thousands of reviews available across multiple platforms, manually analyzin
 
 ---
 
-## Main Tasks
+## 🧩 Main Tasks
 
 <br> 
 
@@ -134,7 +141,7 @@ See [`03_Product_Category_Clustering/3_prodcat.ipynb`](03_Product_Category_Clust
 
 ---
 
-## MODEL TRACKING SPREADSHEET
+## 📈 MODEL TRACKING SPREADSHEET
 
 | Model                            | Feature extraction         | Training model                    | Accuracy | Test set | Notes                                                                                     |
 |-----------------------------------|-----------------------------|------------------------------------|----------|----------|---------------------------------------------------------------------------------------------|
@@ -150,7 +157,7 @@ See [`03_Product_Category_Clustering/3_prodcat.ipynb`](03_Product_Category_Clust
 ---
 
 
-## Pipeline
+## ⚙️ Pipeline
 
 ```
 Raw Kaggle exports (3 CSVs, 67,992 rows)
@@ -180,7 +187,7 @@ clean_reviews.csv  (single source of truth for all downstream tasks)
 
 ---
 
-# Results
+# 📈 Results
 
 - **Sentiment Analysis** — 90.8% accuracy / 0.848 macro F1 on a held-out test set of 3,295 reviews. The model performs strongly on the majority `positive` class (F1 0.957) and reasonably on `negative` (F1 0.868), but is noticeably weaker on the minority `neutral` class (F1 0.717) — expected given `neutral` made up only ~4% of the training data.
 - **Product Category Clustering** — 106 unique cleaned product names consolidated into 7 business-oriented meta-categories: Tablets (29,553 reviews), Accessories & Chargers (11,126), Smart Home & Speakers (7,665), E-Readers (4,631), and Non-Electronics (9 — too few reviews to draw firm conclusions on its own).
@@ -193,7 +200,7 @@ clean_reviews.csv  (single source of truth for all downstream tasks)
 
 ---
 
-# Setup & Installation
+# 🔧 Setup & Installation
 
 ### 1. Clone the repository
 
@@ -250,7 +257,7 @@ Deploy with `vercel --prod` once the Hugging Face Hub model repo is set up (see 
 
 ---
 
-# Project Structure
+# 📁 Project Structure
 
 ```
 project-3-brief-NLP-automated-customers-reviews/
@@ -288,7 +295,7 @@ project-3-brief-NLP-automated-customers-reviews/
 
 ---
 
-# Tech Stack
+# 💻 Tech Stack
 
 **Data & Modeling**
 - Python, Jupyter/Colab notebooks
@@ -310,7 +317,7 @@ project-3-brief-NLP-automated-customers-reviews/
 
 ---
 
-# Future Improvements
+# 📆 Future Improvements
 
 - Fill in the remaining rows of the [Model Tracking Spreadsheet](#model-tracking-spreadsheet) as additional models/approaches are tried (e.g. comparing `bert-base-uncased` or `roberta-base` against the current DistilBERT baseline).
 - Improve minority-class performance for the sentiment model, e.g. targeted oversampling, class-weighted loss, or a larger neutral-review sample.
@@ -324,7 +331,7 @@ project-3-brief-NLP-automated-customers-reviews/
 
 ---
 
-# Authors
+# 🧔 Authors
 
 **Antonio Traquinas** - https://github.com/wtraquinas/
 
@@ -340,7 +347,7 @@ AI Engineering | Machine Learning | NLP
 
 ---
 
-## Acknowledgements
+## ❤️ Acknowledgements
 
 Special Thanks to Luis Junco and Tejal Bhatti, for the inestimable assistance.
 
