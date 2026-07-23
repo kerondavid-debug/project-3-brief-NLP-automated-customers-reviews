@@ -33,16 +33,10 @@ With thousands of reviews available across multiple platforms, manually analyzin
 
 ---
 
-## Models:
-
-1. Sentiment Analysis
-     - distilbert-base-uncased
-2. Product Category Clustering
-     - KMeans + TF-IDF + ngrams
-3. Product Review Summarization
-     - meta-llama/Llama-3.2-3B-Instruct
 
 ---
+
+
 ---
 
 ## MODEL TRACKING SPREADSHEET
@@ -274,26 +268,13 @@ project/
 
 # Tech Stack
 
-* Python
-* Pandas
-* NumPy
-* Scikit-learn
-* NLTK
-* Joblib
-* Streamlit
-* Jupyter Notebook
+
 
 ---
 
 # Future Improvements
 
-* Fine-tune transformer models (BERT, RoBERTa, DistilBERT)
-* Add explainability using SHAP or LIME
-* Improve confidence estimation
-* Train on larger and more recent datasets
-* Support multilingual fake news detection
-* Add source credibility analysis
-* Deploy with Docker and CI/CD pipeline
+
 
 ---
 
@@ -303,13 +284,15 @@ project/
 
 and 
 
-**Casilda Finat** - https://github.com/Casildagsf/
+**David Tayebwa** - https://github.com/kerondavid-debug/
 
 AI Engineering | Machine Learning | NLP
 
 ---
 
 ## Acknowledgements
+
+Special Thanks to Luis Junco and Tejal Bhatti, for the inestimable assistance.
 
 This project was developed as part of the **IronHack AI Engineering Bootcamp**, demonstrating the complete machine learning workflow from data preprocessing to deployment of an interactive web application.
 
