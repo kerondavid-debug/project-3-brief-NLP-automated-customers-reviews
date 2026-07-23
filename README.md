@@ -79,7 +79,9 @@ With thousands of reviews available across multiple platforms, manually analyzin
 
 ## Main Tasks
 
-### 1. Build a model for Sentiment Analysis
+<br> 
+
+## 1. Build a model for Sentiment Analysis
 
 - **Goal**: Classify the textual content of a review as **positive**, **neutral**, or **negative**.
 - **Labeling**: Star ratings were mapped to sentiment classes (1–2 ★ → negative, 3 ★ → neutral, 4–5 ★ → positive). This mapping produced a heavily imbalanced dataset (~92% positive, ~4% neutral, ~4% negative), so class imbalance was accounted for during training and evaluation (macro F1 alongside accuracy).
@@ -88,9 +90,28 @@ With thousands of reviews available across multiple platforms, manually analyzin
 
 <br>
 
+### Text Preprocessing
+
+- Merged the 3 raw Datafiniti export files and removed duplicate reviews (same product + review text + rating).
+- Fixed a data quality issue where the `name` field concatenated two unrelated product names — kept only the first product name segment.
+- Treated `id` as unreliable (the same `id` was found attached to unrelated products in ~11% of reviews) and used the cleaned product name as the trusted identifier instead.
+- For clustering: lowercased text, removed punctuation and stopwords, applied stemming/lemmatization to the cleaned product names.
+- For the transformer model: tokenized review text with the Hugging Face tokenizer matching `distilbert-base-uncased`, encoded into vocabulary IDs, and padded sequences to a uniform length.
+
+
+<br>
+
+### Feature Engineering
+
+- **Sentiment labels**: star ratings mapped to 3 classes — 1–2 ★ → negative, 3 ★ → neutral, 4–5 ★ → positive.
+- **Sentiment model input**: transformer token embeddings from the DistilBERT tokenizer (no manual feature engineering — the model learns representations directly from text).
+- **Clustering features**: TF-IDF vectors (with n-grams) computed over the cleaned, deduplicated product names.
+
+<br>
+
 ---
 
-### 2. Categorization with K-Means Clustering
+## 2. Categorization with K-Means Clustering
 
 - **Goal**: Group the catalog's 106 unique cleaned product names into a small set of business-friendly categories, without relying on manual labeling.
 - **Approach**: A hybrid pipeline — TF-IDF vectorization + K-Means clustering on the cleaned product names, with the resulting clusters interpreted and refined using the (partially available but reliable) `primaryCategories` field, then mapped with explicit rules into final meta-categories. This keeps the data-driven discovery of clustering while producing labels that are consistent and easy to explain in a report.
@@ -115,7 +136,7 @@ See [`03_Product_Category_Clustering/3_prodcat.ipynb`](03_Product_Category_Clust
 
 ---
 
-### 3. Summarization
+## 3. Summarization
 
 - **Goal**: Turn raw customer reviews into short, readable recommendation-style write-ups per product category, so a shopper (or a store manager) can understand consensus opinion without reading hundreds of reviews.
 - **Approach**: Prompted `meta-llama/Llama-3.2-3B-Instruct` with the reviews for each category (grouped by the 7 meta-categories from step 2) to generate, for each category: the top products with review counts and average ratings, what reviewers like about the top products ("what sets it apart"), the most common complaints, and a "worst product in the category" callout with the reason to avoid it.
@@ -156,25 +177,6 @@ clean_reviews.csv  (single source of truth for all downstream tasks)
 
 <br>
 
---- 
-
-### Text Preprocessing
-
-- Merged the 3 raw Datafiniti export files and removed duplicate reviews (same product + review text + rating).
-- Fixed a data quality issue where the `name` field concatenated two unrelated product names — kept only the first product name segment.
-- Treated `id` as unreliable (the same `id` was found attached to unrelated products in ~11% of reviews) and used the cleaned product name as the trusted identifier instead.
-- For clustering: lowercased text, removed punctuation and stopwords, applied stemming/lemmatization to the cleaned product names.
-- For the transformer model: tokenized review text with the Hugging Face tokenizer matching `distilbert-base-uncased`, encoded into vocabulary IDs, and padded sequences to a uniform length.
-
-
-<br>
-
-
-### Feature Engineering
-
-- **Sentiment labels**: star ratings mapped to 3 classes — 1–2 ★ → negative, 3 ★ → neutral, 4–5 ★ → positive.
-- **Sentiment model input**: transformer token embeddings from the DistilBERT tokenizer (no manual feature engineering — the model learns representations directly from text).
-- **Clustering features**: TF-IDF vectors (with n-grams) computed over the cleaned, deduplicated product names.
 
 ---
 
