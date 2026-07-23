@@ -97,14 +97,14 @@ With thousands of reviews available across multiple platforms, manually analyzin
 
 **7 Final Meta-Categories:**
 
-|       cluster	|cluster_name	|Number of Products     |
-        0. 	E-Readers	        849
-        1.	Others	                18360
-        2.	Tablets for Kids	5366
-        3.	Chargers & Adapters	354
-        4.	Tablets with Alexa	4628
-        5.	Tablets	                18641
-        6.	Smart Assistants	4786
+|       cluster	|cluster_name	|Number of Products   |
+|        0. 	|E-Readers	 |       849          |
+|        1.	|Others	         |       18360        |
+|        2.	|Tablets for Kids|	5366|
+|        3.	|Chargers & Adapters|	354|
+|        4.	|Tablets with Alexa|	4628|
+|        5.	|Tablets	 |     18641|
+|        6.	|Smart Assistants|	4786|
 
 
 
