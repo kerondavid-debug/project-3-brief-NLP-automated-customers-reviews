@@ -2,7 +2,14 @@
 
 <br>
 
-## Project Goal
+[![Vercel](https://img.shields.io/badge/deployed-Vercel-000?logo=vercel)](https://p3nlp-customers-reviews.vercel.app/)
+[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi)](https://p3nlp-customers-reviews.vercel.app/api/health)
+[![Python](https://img.shields.io/badge/python-3.10+-blue?logo=python)](https://www.python.org/)
+
+<br>
+
+
+## 🎯  Project Goal
 
 This project aims to develop a product review system powered by NLP models that aggregate customer feedback from different sources. The key tasks include classifying reviews, clustering product categories, and using generative AI to summarize reviews into recommendation articles.
 
@@ -10,36 +17,22 @@ This project aims to develop a product review system powered by NLP models that 
 
 ---
 
-## MODEL TRACKING SPREADSHEET
 
-| Model                            | Feature extraction         | Training model                    | Accuracy | Test set | Notes                                                                                     |
-|-----------------------------------|-----------------------------|------------------------------------|----------|----------|---------------------------------------------------------------------------------------------|
-| 1. Sentiment Analysis            | Hugging Face tokenizer      | `distilbert-base-uncased` (fine-tuned) | 90.8%   | 3,295 reviews | Macro F1 0.848; weakest on the minority `neutral` class (F1 0.717), strongest on `positive` (F1 0.957) |
-| 2. Product Category Clustering   | TF‑IDF (word n-grams)       | KMeans + rule-based mapping        | n/a (unsupervised) | — | Hybrid approach: KMeans clusters on cleaned product names, refined with `primaryCategories` into 7 final meta-categories |
-| 3. Product Review Summarization  | Prompted generation         | `meta-llama/Llama-3.2-3B-Instruct` | n/a (generative) | — | Evaluated qualitatively (readability/faithfulness of generated summaries), not via classification accuracy |
-| 4. Product Review Summarization                                |    Hugging Face tokenizer                           | `distilbert-base-uncased`                                     |          |          |       the new transformers did not provide the summarization task                                                                                        | 
-| 5.                                |                              |                                     |          |          |                                                                                               |
-| 6.                                |                              |                                     |          |          |                                                                                               |
-
-<br>
-
----
-
-## Deployment
+## 🚀 Deployment
 
 ### Application hosted on Vercel
 
 <center>
 <table>
-  <td><img src="../00_Archive/Images/SentimentReviewLAB_Negative.jpg" height="420" alt="SentimentReviewLAB_Negative"></td>
+  <td><img src="./00_Archive/Images/SentimentReviewLAB_Negative.jpg" height="420" alt="SentimentReviewLAB_Negative"></td>
   <td> &nbsp &nbsp </td>
-  <td><img src="../00_Archive/Images/SentimentReviewLAB_Neutral.jpg" height="420" alt="SentimentReviewLAB_Neutral"></td>
+  <td><img src="./00_Archive/Images/SentimentReviewLAB_Neutral.jpg" height="420" alt="SentimentReviewLAB_Neutral"></td>
 </table>
 </center>
 
 ---
 
-## Live Demo
+## 🚀 Live Demo
 
 🌐 **Vercel Hosting API and Application**
 
@@ -56,7 +49,7 @@ https://p3nlp-customers-reviews.vercel.app/api/predict
 
 ---
 
-## Problem Statement
+## 📌 Problem Statement
 
 With thousands of reviews available across multiple platforms, manually analyzing them is inefficient. This project seeks to automate the process using NLP models to extract insights and provide users with valuable product recommendations.
 
@@ -64,7 +57,7 @@ With thousands of reviews available across multiple platforms, manually analyzin
 
 ---
 
-## Datasets
+## 📊 Datasets
 
 **Primary Dataset - Consumer Reviews of Amazon Products** :
 - https://www.kaggle.com/datasets/datafiniti/consumer-reviews-of-amazon-products/data
@@ -77,9 +70,11 @@ With thousands of reviews available across multiple platforms, manually analyzin
 
 ---
 
-## Main Tasks
+## 🧩 Main Tasks
 
-### 1. Build a model for Sentiment Analysis
+<br> 
+
+## 1. Build a model for Sentiment Analysis
 
 - **Goal**: Classify the textual content of a review as **positive**, **neutral**, or **negative**.
 - **Labeling**: Star ratings were mapped to sentiment classes (1–2 ★ → negative, 3 ★ → neutral, 4–5 ★ → positive). This mapping produced a heavily imbalanced dataset (~92% positive, ~4% neutral, ~4% negative), so class imbalance was accounted for during training and evaluation (macro F1 alongside accuracy).
@@ -88,9 +83,28 @@ With thousands of reviews available across multiple platforms, manually analyzin
 
 <br>
 
+### Text Preprocessing
+
+- Merged the 3 raw Datafiniti export files and removed duplicate reviews (same product + review text + rating).
+- Fixed a data quality issue where the `name` field concatenated two unrelated product names — kept only the first product name segment.
+- Treated `id` as unreliable (the same `id` was found attached to unrelated products in ~11% of reviews) and used the cleaned product name as the trusted identifier instead.
+- For clustering: lowercased text, removed punctuation and stopwords, applied stemming/lemmatization to the cleaned product names.
+- For the transformer model: tokenized review text with the Hugging Face tokenizer matching `distilbert-base-uncased`, encoded into vocabulary IDs, and padded sequences to a uniform length.
+
+
+<br>
+
+### Feature Engineering
+
+- **Sentiment labels**: star ratings mapped to 3 classes — 1–2 ★ → negative, 3 ★ → neutral, 4–5 ★ → positive.
+- **Sentiment model input**: transformer token embeddings from the DistilBERT tokenizer (no manual feature engineering — the model learns representations directly from text).
+- **Clustering features**: TF-IDF vectors (with n-grams) computed over the cleaned, deduplicated product names.
+
+<br>
+
 ---
 
-### 2. Categorization with K-Means Clustering
+## 2. Categorization with K-Means Clustering
 
 - **Goal**: Group the catalog's 106 unique cleaned product names into a small set of business-friendly categories, without relying on manual labeling.
 - **Approach**: A hybrid pipeline — TF-IDF vectorization + K-Means clustering on the cleaned product names, with the resulting clusters interpreted and refined using the (partially available but reliable) `primaryCategories` field, then mapped with explicit rules into final meta-categories. This keeps the data-driven discovery of clustering while producing labels that are consistent and easy to explain in a report.
@@ -115,7 +129,7 @@ See [`03_Product_Category_Clustering/3_prodcat.ipynb`](03_Product_Category_Clust
 
 ---
 
-### 3. Summarization
+## 3. Summarization
 
 - **Goal**: Turn raw customer reviews into short, readable recommendation-style write-ups per product category, so a shopper (or a store manager) can understand consensus opinion without reading hundreds of reviews.
 - **Approach**: Prompted `meta-llama/Llama-3.2-3B-Instruct` with the reviews for each category (grouped by the 7 meta-categories from step 2) to generate, for each category: the top products with review counts and average ratings, what reviewers like about the top products ("what sets it apart"), the most common complaints, and a "worst product in the category" callout with the reason to avoid it.
@@ -127,9 +141,23 @@ See [`03_Product_Category_Clustering/3_prodcat.ipynb`](03_Product_Category_Clust
 
 ---
 
+## 📈 MODEL TRACKING SPREADSHEET
+
+| Model                            | Feature extraction         | Training model                    | Accuracy | Test set | Notes                                                                                     |
+|-----------------------------------|-----------------------------|------------------------------------|----------|----------|---------------------------------------------------------------------------------------------|
+| 1. Sentiment Analysis            | Hugging Face tokenizer      | `distilbert-base-uncased` (fine-tuned) | 90.8%   | 3,295 reviews | Macro F1 0.848; weakest on the minority `neutral` class (F1 0.717), strongest on `positive` (F1 0.957) |
+| 2. Product Category Clustering   | TF‑IDF (word n-grams)       | KMeans + rule-based mapping        | n/a (unsupervised) | — | Hybrid approach: KMeans clusters on cleaned product names, refined with `primaryCategories` into 7 final meta-categories |
+| 3. Product Review Summarization  | Prompted generation         | `meta-llama/Llama-3.2-3B-Instruct` | n/a (generative) | — | Evaluated qualitatively (readability/faithfulness of generated summaries), not via classification accuracy |
+| 4. Product Review Summarization                                |    Hugging Face tokenizer                           | `distilbert-base-uncased`                                     |          |          |       the new transformers did not provide the summarization task                                                                                        | 
+| 5.                                |                              |                                     |          |          |                                                                                               |
+| 6.                                |                              |                                     |          |          |                                                                                               |
+
+<br>
+
+---
 
 
-## Pipeline
+## ⚙️ Pipeline
 
 ```
 Raw Kaggle exports (3 CSVs, 67,992 rows)
@@ -156,29 +184,10 @@ clean_reviews.csv  (single source of truth for all downstream tasks)
 
 <br>
 
---- 
-
-### Text Preprocessing
-
-- Merged the 3 raw Datafiniti export files and removed duplicate reviews (same product + review text + rating).
-- Fixed a data quality issue where the `name` field concatenated two unrelated product names — kept only the first product name segment.
-- Treated `id` as unreliable (the same `id` was found attached to unrelated products in ~11% of reviews) and used the cleaned product name as the trusted identifier instead.
-- For clustering: lowercased text, removed punctuation and stopwords, applied stemming/lemmatization to the cleaned product names.
-- For the transformer model: tokenized review text with the Hugging Face tokenizer matching `distilbert-base-uncased`, encoded into vocabulary IDs, and padded sequences to a uniform length.
-
-
-<br>
-
-
-### Feature Engineering
-
-- **Sentiment labels**: star ratings mapped to 3 classes — 1–2 ★ → negative, 3 ★ → neutral, 4–5 ★ → positive.
-- **Sentiment model input**: transformer token embeddings from the DistilBERT tokenizer (no manual feature engineering — the model learns representations directly from text).
-- **Clustering features**: TF-IDF vectors (with n-grams) computed over the cleaned, deduplicated product names.
 
 ---
 
-# Results
+# 📈 Results
 
 - **Sentiment Analysis** — 90.8% accuracy / 0.848 macro F1 on a held-out test set of 3,295 reviews. The model performs strongly on the majority `positive` class (F1 0.957) and reasonably on `negative` (F1 0.868), but is noticeably weaker on the minority `neutral` class (F1 0.717) — expected given `neutral` made up only ~4% of the training data.
 - **Product Category Clustering** — 106 unique cleaned product names consolidated into 7 business-oriented meta-categories: Tablets (29,553 reviews), Accessories & Chargers (11,126), Smart Home & Speakers (7,665), E-Readers (4,631), and Non-Electronics (9 — too few reviews to draw firm conclusions on its own).
@@ -191,7 +200,7 @@ clean_reviews.csv  (single source of truth for all downstream tasks)
 
 ---
 
-# Setup & Installation
+# 🔧 Setup & Installation
 
 ### 1. Clone the repository
 
@@ -248,7 +257,7 @@ Deploy with `vercel --prod` once the Hugging Face Hub model repo is set up (see 
 
 ---
 
-# Project Structure
+# 📁 Project Structure
 
 ```
 project-3-brief-NLP-automated-customers-reviews/
@@ -286,7 +295,7 @@ project-3-brief-NLP-automated-customers-reviews/
 
 ---
 
-# Tech Stack
+# 💻 Tech Stack
 
 **Data & Modeling**
 - Python, Jupyter/Colab notebooks
@@ -308,7 +317,7 @@ project-3-brief-NLP-automated-customers-reviews/
 
 ---
 
-# Future Improvements
+# 📆 Future Improvements
 
 - Fill in the remaining rows of the [Model Tracking Spreadsheet](#model-tracking-spreadsheet) as additional models/approaches are tried (e.g. comparing `bert-base-uncased` or `roberta-base` against the current DistilBERT baseline).
 - Improve minority-class performance for the sentiment model, e.g. targeted oversampling, class-weighted loss, or a larger neutral-review sample.
@@ -322,7 +331,7 @@ project-3-brief-NLP-automated-customers-reviews/
 
 ---
 
-# Authors
+# 🧔 Authors
 
 **Antonio Traquinas** - https://github.com/wtraquinas/
 
@@ -338,7 +347,7 @@ AI Engineering | Machine Learning | NLP
 
 ---
 
-## Acknowledgements
+## ❤️ Acknowledgements
 
 Special Thanks to Luis Junco and Tejal Bhatti, for the inestimable assistance.
 
